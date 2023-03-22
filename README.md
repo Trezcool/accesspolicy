@@ -9,6 +9,12 @@ Example:
 ```go
 package main
 
+const rootUserID = 1
+
+func isRoot(user User, action Action) bool {
+	return user.GetID() == rootUserID
+}
+
 func main() {
 	// Define a policy
 	policy := AccessPolicy{
@@ -17,9 +23,7 @@ func main() {
 				Actions:   Actions{ActionAll},
 				Principal: PrincipalAuthenticated,
 				Conditions: Conditions{
-					func(user User, action Action) bool {
-						return user.GetID() == 1
-					},
+					isRoot,
 				},
 				Effect: EffectAllow,
 			},
@@ -32,7 +36,7 @@ func main() {
 	}
 
 	// Define a user and an action
-	usr := &user{id: 1}
+	usr := &user{id: rootUserID}
 	action := HTTPMethodAction(http.MethodGet)
 
 	// Enforce the policy
