@@ -9,19 +9,19 @@ import (
 )
 
 type (
-	user interface {
+	User interface {
 		IsAnonymous() bool
 	}
 	userWithID interface {
-		user
+		User
 		GetID() uint
 	}
 	userWithGroups interface {
-		user
+		User
 		GetGroups() []string
 	}
 	userWithPermissions interface {
-		user
+		User
 		GetPermissions() []string
 	}
 )
@@ -37,14 +37,14 @@ type Statement struct {
 	Effect     Effect
 }
 
-func (p *AccessPolicy) HasPermission(user user, action Action) bool {
+func (p *AccessPolicy) HasPermission(user User, action Action) bool {
 	if len(p.Statements) == 0 {
 		return false
 	}
 	return p.evaluateStatements(user, action)
 }
 
-func (p *AccessPolicy) evaluateStatements(user user, action Action) bool {
+func (p *AccessPolicy) evaluateStatements(user User, action Action) bool {
 	matched := p.getStatementsMatchingAction(action)
 	matched = p.getStatementsMatchingPrincipal(matched, user)
 	matched = p.getStatementsMatchingConditions(matched, user, action)
@@ -62,12 +62,12 @@ func (p *AccessPolicy) getStatementsMatchingAction(action Action) []Statement {
 		return statement.Actions.Match(action)
 	})
 }
-func (p *AccessPolicy) getStatementsMatchingPrincipal(statements []Statement, user user) []Statement {
+func (p *AccessPolicy) getStatementsMatchingPrincipal(statements []Statement, user User) []Statement {
 	return lo.Filter(statements, func(statement Statement, _ int) bool {
 		return statement.Principal.Match(user)
 	})
 }
-func (p *AccessPolicy) getStatementsMatchingConditions(statements []Statement, user user, action Action) []Statement {
+func (p *AccessPolicy) getStatementsMatchingConditions(statements []Statement, user User, action Action) []Statement {
 	return lo.Filter(statements, func(statement Statement, _ int) bool {
 		return statement.Conditions.Match(user, action)
 	})
@@ -112,7 +112,7 @@ func HTTPMethodAction(method string) Action {
 
 type Principal string
 
-func (p Principal) Match(user user) bool {
+func (p Principal) Match(user User) bool {
 	switch {
 	case p == PrincipalAll:
 		return true
@@ -131,7 +131,7 @@ func (p Principal) Match(user user) bool {
 	}
 }
 
-func (p Principal) matchGroups(user user) bool {
+func (p Principal) matchGroups(user User) bool {
 	u, ok := user.(userWithGroups)
 	if !ok {
 		return false
@@ -141,7 +141,7 @@ func (p Principal) matchGroups(user user) bool {
 	uGroups := u.GetGroups()
 	return len(lo.Intersect(pGroups, uGroups)) > 0
 }
-func (p Principal) matchPermissions(user user) bool {
+func (p Principal) matchPermissions(user User) bool {
 	u, ok := user.(userWithPermissions)
 	if !ok {
 		return false
@@ -151,7 +151,7 @@ func (p Principal) matchPermissions(user user) bool {
 	uPerms := u.GetPermissions()
 	return len(lo.Intersect(pPerms, uPerms)) == len(pPerms)
 }
-func (p Principal) matchUser(user user) bool {
+func (p Principal) matchUser(user User) bool {
 	u, ok := user.(userWithID)
 	if !ok {
 		return false
@@ -189,11 +189,11 @@ func UserPrincipal(user ...string) Principal {
 	return Principal(principalUserPrefix + strings.Join(user, ","))
 }
 
-type Condition func(user user, action Action) bool
+type Condition func(user User, action Action) bool
 
 type Conditions []Condition
 
-func (l Conditions) Match(user user, action Action) bool {
+func (l Conditions) Match(user User, action Action) bool {
 	return lo.EveryBy(l, func(condition Condition) bool {
 		return condition(user, action)
 	})
