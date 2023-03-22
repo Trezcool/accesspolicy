@@ -127,10 +127,10 @@ func (p Principal) matchGroups(user User) bool {
 	return len(lo.Intersect(pGroups, uGroups)) > 0
 }
 func (p Principal) matchPermissions(user User) bool {
-	pPermissionsStr := strings.TrimPrefix(string(p), principalPermissionPrefix)
-	pPermissions := strings.Split(pPermissionsStr, ",")
-	uPermissions := user.GetPermissions()
-	return len(lo.Intersect(pPermissions, uPermissions)) == len(pPermissions)
+	pPermsStr := strings.TrimPrefix(string(p), principalPermissionPrefix)
+	pPerms := strings.Split(pPermsStr, ",")
+	uPerms := user.GetPermissions()
+	return len(lo.Intersect(pPerms, uPerms)) == len(pPerms)
 }
 func (p Principal) matchUser(user User) bool {
 	pUsersStr := strings.TrimPrefix(string(p), principalUserPrefix)
