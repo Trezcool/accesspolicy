@@ -139,7 +139,7 @@ func (p Principal) matchGroups(user User) bool {
 	pGroupsStr := strings.TrimPrefix(string(p), principalGroupPrefix)
 	pGroups := strings.Split(pGroupsStr, ",")
 	uGroups := u.GetGroups()
-	return len(lo.Intersect(pGroups, uGroups)) > 0
+	return len(lo.Intersect(pGroups, uGroups)) > 0 // ANY
 }
 func (p Principal) matchPermissions(user User) bool {
 	u, ok := user.(userWithPermissions)
@@ -149,7 +149,7 @@ func (p Principal) matchPermissions(user User) bool {
 	pPermsStr := strings.TrimPrefix(string(p), principalPermissionPrefix)
 	pPerms := strings.Split(pPermsStr, ",")
 	uPerms := u.GetPermissions()
-	return len(lo.Intersect(pPerms, uPerms)) == len(pPerms)
+	return len(lo.Intersect(pPerms, uPerms)) == len(pPerms) // ALL
 }
 func (p Principal) matchUser(user User) bool {
 	u, ok := user.(userWithID)
