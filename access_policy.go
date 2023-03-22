@@ -114,7 +114,7 @@ func (p Principal) Match(user User) bool {
 	case strings.HasPrefix(string(p), principalPermissionPrefix):
 		return p.matchPermissions(user)
 	case strings.HasPrefix(string(p), principalUserPrefix):
-		return p.matchUsers(user)
+		return p.matchUser(user)
 	default:
 		return false
 	}
@@ -132,7 +132,7 @@ func (p Principal) matchPermissions(user User) bool {
 	uPermissions := user.GetPermissions()
 	return len(lo.Intersect(pPermissions, uPermissions)) == len(pPermissions)
 }
-func (p Principal) matchUsers(user User) bool {
+func (p Principal) matchUser(user User) bool {
 	pUsersStr := strings.TrimPrefix(string(p), principalUserPrefix)
 	pUsers := strings.Split(pUsersStr, ",")
 	uID := strconv.Itoa(int(user.GetID()))
