@@ -45,7 +45,5 @@ func main() {
 
 type user struct{ id uint }
 func (u *user) GetID() uint              { return u.id }
-func (u *user) GetGroups() []string      { return nil }
-func (u *user) GetPermissions() []string { return nil }
-func (u *user) IsAnonymous() bool        { return false }
+func (u *user) IsAnonymous() bool        { return u.id == 0 }
 ```

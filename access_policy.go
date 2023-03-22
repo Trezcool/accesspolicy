@@ -8,12 +8,23 @@ import (
 	"github.com/samber/lo"
 )
 
-type User interface {
-	GetID() uint
-	IsAnonymous() bool
-	GetGroups() []string
-	GetPermissions() []string
-}
+type (
+	user interface {
+		IsAnonymous() bool
+	}
+	userWithID interface {
+		user
+		GetID() uint
+	}
+	userWithGroups interface {
+		user
+		GetGroups() []string
+	}
+	userWithPermissions interface {
+		user
+		GetPermissions() []string
+	}
+)
 
 type AccessPolicy struct {
 	Statements []Statement
@@ -26,14 +37,14 @@ type Statement struct {
 	Effect     Effect
 }
 
-func (p *AccessPolicy) HasPermission(user User, action Action) bool {
+func (p *AccessPolicy) HasPermission(user user, action Action) bool {
 	if len(p.Statements) == 0 {
 		return false
 	}
 	return p.evaluateStatements(user, action)
 }
 
-func (p *AccessPolicy) evaluateStatements(user User, action Action) bool {
+func (p *AccessPolicy) evaluateStatements(user user, action Action) bool {
 	matched := p.getStatementsMatchingAction(action)
 	matched = p.getStatementsMatchingPrincipal(matched, user)
 	matched = p.getStatementsMatchingConditions(matched, user, action)
@@ -51,12 +62,12 @@ func (p *AccessPolicy) getStatementsMatchingAction(action Action) []Statement {
 		return statement.Actions.Match(action)
 	})
 }
-func (p *AccessPolicy) getStatementsMatchingPrincipal(statements []Statement, user User) []Statement {
+func (p *AccessPolicy) getStatementsMatchingPrincipal(statements []Statement, user user) []Statement {
 	return lo.Filter(statements, func(statement Statement, _ int) bool {
 		return statement.Principal.Match(user)
 	})
 }
-func (p *AccessPolicy) getStatementsMatchingConditions(statements []Statement, user User, action Action) []Statement {
+func (p *AccessPolicy) getStatementsMatchingConditions(statements []Statement, user user, action Action) []Statement {
 	return lo.Filter(statements, func(statement Statement, _ int) bool {
 		return statement.Conditions.Match(user, action)
 	})
@@ -101,7 +112,7 @@ func HTTPMethodAction(method string) Action {
 
 type Principal string
 
-func (p Principal) Match(user User) bool {
+func (p Principal) Match(user user) bool {
 	switch {
 	case p == PrincipalAll:
 		return true
@@ -120,22 +131,34 @@ func (p Principal) Match(user User) bool {
 	}
 }
 
-func (p Principal) matchGroups(user User) bool {
+func (p Principal) matchGroups(user user) bool {
+	u, ok := user.(userWithGroups)
+	if !ok {
+		return false
+	}
 	pGroupsStr := strings.TrimPrefix(string(p), principalGroupPrefix)
 	pGroups := strings.Split(pGroupsStr, ",")
-	uGroups := user.GetGroups()
+	uGroups := u.GetGroups()
 	return len(lo.Intersect(pGroups, uGroups)) > 0
 }
-func (p Principal) matchPermissions(user User) bool {
+func (p Principal) matchPermissions(user user) bool {
+	u, ok := user.(userWithPermissions)
+	if !ok {
+		return false
+	}
 	pPermsStr := strings.TrimPrefix(string(p), principalPermissionPrefix)
 	pPerms := strings.Split(pPermsStr, ",")
-	uPerms := user.GetPermissions()
+	uPerms := u.GetPermissions()
 	return len(lo.Intersect(pPerms, uPerms)) == len(pPerms)
 }
-func (p Principal) matchUser(user User) bool {
+func (p Principal) matchUser(user user) bool {
+	u, ok := user.(userWithID)
+	if !ok {
+		return false
+	}
 	pUsersStr := strings.TrimPrefix(string(p), principalUserPrefix)
 	pUsers := strings.Split(pUsersStr, ",")
-	uID := strconv.Itoa(int(user.GetID()))
+	uID := strconv.Itoa(int(u.GetID()))
 	return lo.Contains(pUsers, uID)
 }
 
@@ -166,11 +189,11 @@ func UserPrincipal(user ...string) Principal {
 	return Principal(principalUserPrefix + strings.Join(user, ","))
 }
 
-type Condition func(user User, action Action) bool
+type Condition func(user user, action Action) bool
 
 type Conditions []Condition
 
-func (l Conditions) Match(user User, action Action) bool {
+func (l Conditions) Match(user user, action Action) bool {
 	return lo.EveryBy(l, func(condition Condition) bool {
 		return condition(user, action)
 	})
