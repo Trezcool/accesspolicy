@@ -138,7 +138,6 @@ func (p Principal) matchGroups(user User) bool {
 	}
 	pGroupsStr := strings.TrimPrefix(string(p), principalGroupPrefix)
 	pGroups := strings.Split(pGroupsStr, ",")
-	pGroups = lo.Map(pGroups, func(group string, _ int) string { return strings.TrimSpace(group) })
 	uGroups := u.GetGroups()
 	return len(lo.Intersect(pGroups, uGroups)) > 0 // ANY
 }
@@ -149,7 +148,6 @@ func (p Principal) matchPermissions(user User) bool {
 	}
 	pPermsStr := strings.TrimPrefix(string(p), principalPermissionPrefix)
 	pPerms := strings.Split(pPermsStr, ",")
-	pPerms = lo.Map(pPerms, func(perm string, _ int) string { return strings.TrimSpace(perm) })
 	uPerms := u.GetPermissions()
 	return len(lo.Intersect(pPerms, uPerms)) == len(pPerms) // ALL
 }
@@ -160,7 +158,6 @@ func (p Principal) matchUser(user User) bool {
 	}
 	pUserIDsStr := strings.TrimPrefix(string(p), principalUserPrefix)
 	pUserIDs := strings.Split(pUserIDsStr, ",")
-	pUserIDs = lo.Map(pUserIDs, func(id string, _ int) string { return strings.TrimSpace(id) })
 	uID := strconv.Itoa(int(u.GetID()))
 	return lo.Contains(pUserIDs, uID)
 }
