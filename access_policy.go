@@ -42,6 +42,10 @@ type Statement struct {
 }
 
 func (p *AccessPolicy) HasPermission(user User, action Action) bool {
+	if su, ok := user.(superUser); ok && su.IsSuperUser() {
+		return true
+	}
+
 	if len(p.Statements) == 0 {
 		return false
 	}
@@ -117,10 +121,6 @@ func HTTPMethodAction(method string) Action {
 type Principal string
 
 func (p Principal) Match(user User) bool {
-	if su, ok := user.(superUser); ok && su.IsSuperUser() {
-		return true
-	}
-
 	switch {
 	case p == PrincipalAll:
 		return true
