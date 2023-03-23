@@ -117,8 +117,8 @@ func HTTPMethodAction(method string) Action {
 type Principal string
 
 func (p Principal) Match(user User) bool {
-	u, ok := user.(superUser)
-	if ok && u.IsSuperUser() {
+	su, ok := user.(superUser)
+	if ok && su.IsSuperUser() {
 		return true
 	}
 
@@ -165,10 +165,10 @@ func (p Principal) matchUser(user User) bool {
 	if !ok {
 		return false
 	}
-	pUserIDsStr := strings.TrimPrefix(string(p), principalUserPrefix)
-	pUserIDs := strings.Split(pUserIDsStr, ",")
+	pUIDsStr := strings.TrimPrefix(string(p), principalUserPrefix)
+	pUIDs := strings.Split(pUIDsStr, ",")
 	uID := strconv.Itoa(int(u.GetID()))
-	return lo.Contains(pUserIDs, uID)
+	return lo.Contains(pUIDs, uID)
 }
 
 const (
