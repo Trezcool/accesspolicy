@@ -24,6 +24,10 @@ type (
 		User
 		GetPermissions() []string
 	}
+	superUser interface {
+		User
+		IsSuperUser() bool
+	}
 )
 
 type AccessPolicy struct {
@@ -113,6 +117,11 @@ func HTTPMethodAction(method string) Action {
 type Principal string
 
 func (p Principal) Match(user User) bool {
+	u, ok := user.(superUser)
+	if ok && u.IsSuperUser() {
+		return true
+	}
+
 	switch {
 	case p == PrincipalAll:
 		return true
