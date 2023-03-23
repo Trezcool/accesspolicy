@@ -185,8 +185,8 @@ func PermissionPrincipal(permission ...string) Principal {
 }
 
 // UserPrincipal will match any user whose ID is in the list
-func UserPrincipal(user ...string) Principal {
-	return Principal(principalUserPrefix + strings.Join(user, ","))
+func UserPrincipal(userID ...string) Principal {
+	return Principal(principalUserPrefix + strings.Join(userID, ","))
 }
 
 type Condition func(user User, action Action) bool
