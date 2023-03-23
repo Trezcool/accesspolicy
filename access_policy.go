@@ -117,8 +117,7 @@ func HTTPMethodAction(method string) Action {
 type Principal string
 
 func (p Principal) Match(user User) bool {
-	su, ok := user.(superUser)
-	if ok && su.IsSuperUser() {
+	if su, ok := user.(superUser); ok && su.IsSuperUser() {
 		return true
 	}
 
