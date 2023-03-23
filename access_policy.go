@@ -186,11 +186,8 @@ func PermissionPrincipal(permission ...string) Principal {
 
 // UserPrincipal will match any user whose ID is in the list
 func UserPrincipal(userID ...uint) Principal {
-	userIDs := make([]string, len(userID))
-	for i, id := range userID {
-		userIDs[i] = strconv.Itoa(int(id))
-	}
-	return Principal(principalUserPrefix + strings.Join(userIDs, ","))
+	userIDsStr := lo.Map(userID, func(id uint, _ int) string { return strconv.Itoa(int(id)) })
+	return Principal(principalUserPrefix + strings.Join(userIDsStr, ","))
 }
 
 type Condition func(user User, action Action) bool
