@@ -2,11 +2,14 @@ package main
 
 import (
 	"net/http"
-	"strconv"
 	"strings"
 
 	"github.com/samber/lo"
 )
+
+// todo: tests
+// todo: ci
+// todo: cd -> godoc with examples
 
 type (
 	User interface {
@@ -14,7 +17,7 @@ type (
 	}
 	userWithID interface {
 		User
-		GetID() uint
+		GetIDStr() string
 	}
 	userWithGroups interface {
 		User
@@ -166,7 +169,7 @@ func (p Principal) matchUser(user User) bool {
 	}
 	pUIDsStr := strings.TrimPrefix(string(p), principalUserPrefix)
 	pUIDs := strings.Split(pUIDsStr, ",")
-	uID := strconv.Itoa(int(u.GetID()))
+	uID := u.GetIDStr()
 	return lo.Contains(pUIDs, uID)
 }
 
@@ -193,9 +196,8 @@ func PermissionPrincipal(permission ...string) Principal {
 }
 
 // UserPrincipal will match any user whose ID is in the list
-func UserPrincipal(userID ...uint) Principal {
-	userIDsStr := lo.Map(userID, func(id uint, _ int) string { return strconv.Itoa(int(id)) })
-	return Principal(principalUserPrefix + strings.Join(userIDsStr, ","))
+func UserPrincipal(userID ...string) Principal {
+	return Principal(principalUserPrefix + strings.Join(userID, ","))
 }
 
 type Condition func(user User, action Action) bool
