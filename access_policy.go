@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"net/http"
 	"strings"
 
@@ -44,7 +45,7 @@ type Statement struct {
 	Effect     Effect
 }
 
-func (p *AccessPolicy) HasPermission(user User, action Action) bool {
+func (p *AccessPolicy) HasPermission(ctx context.Context, user User, action Action) bool {
 	if su, ok := user.(superUser); ok && su.IsSuperUser() {
 		return true
 	}
@@ -52,13 +53,13 @@ func (p *AccessPolicy) HasPermission(user User, action Action) bool {
 	if len(p.Statements) == 0 {
 		return false
 	}
-	return p.evaluateStatements(user, action)
+	return p.evaluateStatements(ctx, user, action)
 }
 
-func (p *AccessPolicy) evaluateStatements(user User, action Action) bool {
+func (p *AccessPolicy) evaluateStatements(ctx context.Context, user User, action Action) bool {
 	matched := p.getStatementsMatchingAction(action)
 	matched = p.getStatementsMatchingPrincipal(matched, user)
-	matched = p.getStatementsMatchingConditions(matched, user, action)
+	matched = p.getStatementsMatchingConditions(ctx, matched, user, action)
 
 	denied := p.getDeniedStatements(matched)
 
@@ -78,9 +79,9 @@ func (p *AccessPolicy) getStatementsMatchingPrincipal(statements []Statement, us
 		return statement.Principal.Match(user)
 	})
 }
-func (p *AccessPolicy) getStatementsMatchingConditions(statements []Statement, user User, action Action) []Statement {
+func (p *AccessPolicy) getStatementsMatchingConditions(ctx context.Context, statements []Statement, user User, action Action) []Statement {
 	return lo.Filter(statements, func(statement Statement, _ int) bool {
-		return statement.Conditions.Match(user, action)
+		return statement.Conditions.Match(ctx, user, action)
 	})
 }
 func (p *AccessPolicy) getDeniedStatements(statements []Statement) []Statement {
@@ -200,13 +201,13 @@ func UserPrincipal(userID ...string) Principal {
 	return Principal(principalUserPrefix + strings.Join(userID, ","))
 }
 
-type Condition func(user User, action Action) bool
+type Condition func(ctx context.Context, user User, action Action) bool
 
 type Conditions []Condition
 
-func (l Conditions) Match(user User, action Action) bool {
+func (l Conditions) Match(ctx context.Context, user User, action Action) bool {
 	return lo.EveryBy(l, func(condition Condition) bool {
-		return condition(user, action)
+		return condition(ctx, user, action)
 	})
 }
 
