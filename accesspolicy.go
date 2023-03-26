@@ -34,10 +34,15 @@ type (
 	}
 )
 
+// Policy is a collection of statements that provide access to resources.
+//
+// A policy is evaluated by checking if the user has at least one statement
+// that matches the action and effect is set to allow.
 type Policy struct {
 	Statements []Statement
 }
 
+// Statement is a single statement in a policy that provides access to resources.
 type Statement struct {
 	Actions    Actions
 	Principal  Principal
@@ -45,6 +50,7 @@ type Statement struct {
 	Effect     Effect
 }
 
+// HasPermission checks if the user has permission to perform the action.
 func (p *Policy) HasPermission(ctx context.Context, user User, action Action) bool {
 	if su, ok := user.(superUser); ok && su.IsSuperUser() {
 		return true
@@ -90,6 +96,7 @@ func (p *Policy) getDeniedStatements(statements []Statement) []Statement {
 	})
 }
 
+// Action represents an action that can be performed on a resource.
 type Action struct {
 	Name   string
 	IsSafe bool
@@ -118,10 +125,12 @@ var safeHTTPMethods = []string{
 	http.MethodOptions,
 }
 
+// HTTPMethodAction returns an Action for the given HTTP method.
 func HTTPMethodAction(method string) Action {
 	return Action{method, lo.Contains(safeHTTPMethods, method)}
 }
 
+// Principal represents a user or group that can perform an action.
 type Principal string
 
 func (p Principal) Match(user User) bool {
@@ -191,8 +200,9 @@ func GroupPrincipal(group ...string) Principal {
 	return Principal(principalGroupPrefix + strings.Join(group, ","))
 }
 
-// PermissionPrincipal will match any user that has all the permissions TODO: support OR ?
+// PermissionPrincipal will match any user that has all the permissions
 func PermissionPrincipal(permission ...string) Principal {
+	//  TODO: support OR ?
 	return Principal(principalPermissionPrefix + strings.Join(permission, ","))
 }
 
@@ -201,6 +211,7 @@ func UserPrincipal(userID ...string) Principal {
 	return Principal(principalUserPrefix + strings.Join(userID, ","))
 }
 
+// Condition represents a condition that must be met for an action to be allowed.
 type Condition func(ctx context.Context, user User, action Action) bool
 
 type Conditions []Condition
@@ -211,6 +222,7 @@ func (l Conditions) Match(ctx context.Context, user User, action Action) bool {
 	})
 }
 
+// Effect represents the effect of a statement.
 type Effect string
 
 const (

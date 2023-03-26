@@ -1,4 +1,4 @@
-module github.com/Trezcool/access-policy
+module github.com/Trezcool/accesspolicy
 
 go 1.20
 
