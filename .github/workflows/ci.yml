@@ -1,0 +1,29 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  schedule:
+    - cron: '0 10 * * 1' # run "At 10:00 on Monday"
+#  workflow_dispatch:
+#    inputs:
+#      tag:
+#        description: 'Tag to create'
+#        required: true
+#        default: 'v0.0.0'
+
+# See https://github.com/Trezcool/.github/.github/workflows
+jobs:
+  lint:
+#    uses: Trezcool/.github/.github/workflows/lint.yml@v0.4.0
+    uses: Trezcool/.github/.github/workflows/lint.yml@main
+
+  build:
+#    uses: Trezcool/.github/.github/workflows/build.yml@v0.4.0
+    uses: Trezcool/.github/.github/workflows/build.yml@main
+
+  vuln:
+#    uses: Trezcool/.github/.github/workflows/vuln.yml@v0.4.0
+    uses: Trezcool/.github/.github/workflows/vuln.yml@main

@@ -1,0 +1,18 @@
+name: cd
+
+on:
+  workflow_dispatch:
+    branches: [main]
+    inputs:
+      tag:
+        description: 'Tag to create'
+        required: true
+        default: 'v0.0.0'
+
+# See https://github.com/Trezcool/.github/.github/workflows
+jobs:
+  release:
+#    uses: Trezcool/.github/.github/workflows/release.yml@v0.4.0
+    uses: Trezcool/.github/.github/workflows/release.yml@main
+    with:
+      tag: ${{ github.event.inputs.tag }}

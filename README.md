@@ -1,5 +1,11 @@
 # access-policy
 
+[![build-img]][build-url]
+[![pkg-img]][pkg-url]
+[![reportcard-img]][reportcard-url]
+[![coverage-img]][coverage-url]
+[![version-img]][version-url]
+
 This initiative employs a declarative and explicit strategy for handling access control in Go projects. 
 It is consolidated in a single location and presented in a manner that is comprehensible to individuals with lesser technical expertise. 
 If you have experience with other declarative access frameworks, like AWS' IAM, you will find the syntax to be familiar.
@@ -51,3 +57,14 @@ type user struct{ id uint }
 func (u *user) GetID() uint              { return u.id }
 func (u *user) IsAnonymous() bool        { return u.id == 0 }
 ```
+
+[build-img]: https://github.com/Trezcool/access-policy/workflows/ci/badge.svg
+[build-url]: https://github.com/Trezcool/access-policy/actions
+[pkg-img]: https://pkg.go.dev/badge/Trezcool/access-policy/v0
+[pkg-url]: https://pkg.go.dev/github.com/Trezcool/access-policy/v0
+[reportcard-img]: https://goreportcard.com/badge/Trezcool/access-policy
+[reportcard-url]: https://goreportcard.com/report/Trezcool/access-policy
+[coverage-img]: https://codecov.io/gh/Trezcool/access-policy/branch/main/graph/badge.svg
+[coverage-url]: https://codecov.io/gh/Trezcool/access-policy
+[version-img]: https://img.shields.io/github/v/release/Trezcool/access-policy
+[version-url]: https://github.com/Trezcool/access-policy/releases
