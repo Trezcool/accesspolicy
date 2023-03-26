@@ -15,5 +15,5 @@ jobs:
 #    uses: Trezcool/.github/.github/workflows/release.yml@v0.4.0
     uses: Trezcool/.github/.github/workflows/release.yml@main
     with:
-      repo: 'Trezcool/accesspolicy'
+      repo: Trezcool/accesspolicy
       tag: ${{ github.event.inputs.tag }}
