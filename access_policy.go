@@ -176,8 +176,8 @@ func (p Principal) matchUser(user User) bool {
 
 const (
 	PrincipalAll           Principal = "*"
-	PrincipalAuthenticated           = "authenticated"
-	PrincipalAnonymous               = "anonymous"
+	PrincipalAuthenticated Principal = "authenticated"
+	PrincipalAnonymous     Principal = "anonymous"
 )
 
 const (
@@ -215,5 +215,5 @@ type Effect string
 
 const (
 	EffectAllow Effect = "allow"
-	EffectDeny         = "deny"
+	EffectDeny  Effect = "deny"
 )
