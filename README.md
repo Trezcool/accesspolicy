@@ -1,4 +1,4 @@
-# access-policy
+# accesspolicy
 
 [![build-img]][build-url]
 [![pkg-img]][pkg-url]
@@ -17,13 +17,13 @@ package main
 
 const rootUserID = 1
 
-func isRoot(user User, action Action) bool {
+func isRoot(ctx context.Context, user User, action Action) bool {
 	return user.GetID() == rootUserID
 }
 
 func main() {
 	// Define a policy
-	policy := AccessPolicy{
+	policy := Policy{
 		Statements: []Statement{
 			{
 				Actions:   Actions{ActionAll},
@@ -42,11 +42,12 @@ func main() {
 	}
 
 	// Define a user and an action
+	ctx := context.Background()
 	usr := &user{id: rootUserID}
 	action := HTTPMethodAction(http.MethodGet)
 
 	// Enforce the policy
-	if policy.HasPermission(usr, action) {
+	if policy.HasPermission(ctx, usr, action) {
 		// Allow
 	} else {
 		// Deny

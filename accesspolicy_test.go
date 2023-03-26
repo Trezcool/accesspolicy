@@ -1,4 +1,4 @@
-package main
+package accesspolicy
 
 import (
 	"context"
@@ -27,7 +27,7 @@ func TestAccessPolicy_HasPermission(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			p := &AccessPolicy{
+			p := &Policy{
 				Statements: tt.fields.Statements,
 			}
 			if got := p.HasPermission(tt.args.ctx, tt.args.user, tt.args.action); got != tt.want {

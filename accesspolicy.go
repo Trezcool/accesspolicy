@@ -1,4 +1,4 @@
-package main
+package accesspolicy
 
 import (
 	"context"
@@ -34,7 +34,7 @@ type (
 	}
 )
 
-type AccessPolicy struct {
+type Policy struct {
 	Statements []Statement
 }
 
@@ -45,7 +45,7 @@ type Statement struct {
 	Effect     Effect
 }
 
-func (p *AccessPolicy) HasPermission(ctx context.Context, user User, action Action) bool {
+func (p *Policy) HasPermission(ctx context.Context, user User, action Action) bool {
 	if su, ok := user.(superUser); ok && su.IsSuperUser() {
 		return true
 	}
@@ -56,7 +56,7 @@ func (p *AccessPolicy) HasPermission(ctx context.Context, user User, action Acti
 	return p.evaluateStatements(ctx, user, action)
 }
 
-func (p *AccessPolicy) evaluateStatements(ctx context.Context, user User, action Action) bool {
+func (p *Policy) evaluateStatements(ctx context.Context, user User, action Action) bool {
 	matched := p.getStatementsMatchingAction(action)
 	matched = p.getStatementsMatchingPrincipal(matched, user)
 	matched = p.getStatementsMatchingConditions(ctx, matched, user, action)
@@ -69,22 +69,22 @@ func (p *AccessPolicy) evaluateStatements(ctx context.Context, user User, action
 	return true
 }
 
-func (p *AccessPolicy) getStatementsMatchingAction(action Action) []Statement {
+func (p *Policy) getStatementsMatchingAction(action Action) []Statement {
 	return lo.Filter(p.Statements, func(statement Statement, _ int) bool {
 		return statement.Actions.Match(action)
 	})
 }
-func (p *AccessPolicy) getStatementsMatchingPrincipal(statements []Statement, user User) []Statement {
+func (p *Policy) getStatementsMatchingPrincipal(statements []Statement, user User) []Statement {
 	return lo.Filter(statements, func(statement Statement, _ int) bool {
 		return statement.Principal.Match(user)
 	})
 }
-func (p *AccessPolicy) getStatementsMatchingConditions(ctx context.Context, statements []Statement, user User, action Action) []Statement {
+func (p *Policy) getStatementsMatchingConditions(ctx context.Context, statements []Statement, user User, action Action) []Statement {
 	return lo.Filter(statements, func(statement Statement, _ int) bool {
 		return statement.Conditions.Match(ctx, user, action)
 	})
 }
-func (p *AccessPolicy) getDeniedStatements(statements []Statement) []Statement {
+func (p *Policy) getDeniedStatements(statements []Statement) []Statement {
 	return lo.Filter(statements, func(statement Statement, _ int) bool {
 		return statement.Effect != EffectAllow
 	})
