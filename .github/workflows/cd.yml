@@ -4,6 +4,10 @@ on:
   workflow_dispatch:
     branches: [main]
     inputs:
+      repo:
+        description: 'The repo to release'
+        required: true
+        default: 'Trezcool/accesspolicy'
       tag:
         description: 'Tag to create'
         required: true
@@ -15,5 +19,5 @@ jobs:
 #    uses: Trezcool/.github/.github/workflows/release.yml@v0.4.0
     uses: Trezcool/.github/.github/workflows/release.yml@main
     with:
-      repo: Trezcool/accesspolicy
+      repo: ${{ github.event.inputs.repo }}
       tag: ${{ github.event.inputs.tag }}
