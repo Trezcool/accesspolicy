@@ -59,13 +59,13 @@ func (u *user) GetID() uint              { return u.id }
 func (u *user) IsAnonymous() bool        { return u.id == 0 }
 ```
 
-[build-img]: https://github.com/Trezcool/access-policy/workflows/ci/badge.svg
-[build-url]: https://github.com/Trezcool/access-policy/actions
-[pkg-img]: https://pkg.go.dev/badge/Trezcool/access-policy/v0
-[pkg-url]: https://pkg.go.dev/github.com/Trezcool/access-policy/v0
-[reportcard-img]: https://goreportcard.com/badge/Trezcool/access-policy
-[reportcard-url]: https://goreportcard.com/report/Trezcool/access-policy
-[coverage-img]: https://codecov.io/gh/Trezcool/access-policy/branch/main/graph/badge.svg
-[coverage-url]: https://codecov.io/gh/Trezcool/access-policy
-[version-img]: https://img.shields.io/github/v/release/Trezcool/access-policy
-[version-url]: https://github.com/Trezcool/access-policy/releases
+[build-img]: https://github.com/Trezcool/accesspolicy/workflows/ci/badge.svg
+[build-url]: https://github.com/Trezcool/accesspolicy/actions
+[pkg-img]: https://pkg.go.dev/badge/Trezcool/accesspolicy/v0
+[pkg-url]: https://pkg.go.dev/github.com/Trezcool/accesspolicy/v0
+[reportcard-img]: https://goreportcard.com/badge/Trezcool/accesspolicy
+[reportcard-url]: https://goreportcard.com/report/Trezcool/accesspolicy
+[coverage-img]: https://codecov.io/gh/Trezcool/accesspolicy/branch/main/graph/badge.svg
+[coverage-url]: https://codecov.io/gh/Trezcool/accesspolicy
+[version-img]: https://img.shields.io/github/v/release/Trezcool/accesspolicy
+[version-url]: https://github.com/Trezcool/accesspolicy/releases
