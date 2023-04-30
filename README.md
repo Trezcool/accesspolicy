@@ -5,6 +5,7 @@
 [![reportcard-img]][reportcard-url]
 [![coverage-img]][coverage-url]
 [![version-img]][version-url]
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FTrezcool%2Faccesspolicy.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2FTrezcool%2Faccesspolicy?ref=badge_shield)
 
 This initiative employs a declarative and explicit strategy for handling access control in Go projects. 
 It is consolidated in a single location and presented in a manner that is comprehensible to individuals with lesser technical expertise. 
@@ -69,3 +70,7 @@ func (u *user) IsAnonymous() bool        { return u.id == 0 }
 [coverage-url]: https://codecov.io/gh/Trezcool/accesspolicy
 [version-img]: https://img.shields.io/github/v/release/Trezcool/accesspolicy
 [version-url]: https://github.com/Trezcool/accesspolicy/releases
+
+
+## License
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FTrezcool%2Faccesspolicy.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2FTrezcool%2Faccesspolicy?ref=badge_large)
